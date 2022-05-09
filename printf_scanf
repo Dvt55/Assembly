@@ -1,0 +1,31 @@
+%include "io.inc"
+Extern scanf
+Extern printf
+
+section .data
+str_scanf db "%d", 0xd, 0xa, 0x0a ;string do tipo da variavel para ler (Neste caso, um inteiro)
+str_print2 db "%d", 0xd, 0xa, 0x0  ;string do tipo da variavel para printar
+
+section .bss
+res RESD 1 ;variavel que queremos ler
+
+section .text
+global CMAIN
+CMAIN:
+    mov ebp,esp
+    
+    ;alocamos na pilha, os parâmetros do nosso scanf (a variavel e o tipo) e fazemos a chamada da função
+    push res
+    push str_scanf 
+    call scanf
+    add esp, 8
+    
+    ;alocamos na pilha, os parâmetros do nosso printf e chamamos a função
+    
+    push dword [res] ;Usamos o colchetes, pois queremos printar o CONTEÚDO da variável
+    push str_print2
+    call printf
+    add esp, 8
+    mov esp,ebp
+    xor eax, eax
+    ret
