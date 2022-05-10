@@ -23,8 +23,22 @@ CMAIN:
     
     mov eax, [num1]
     mov ebx,[num1]
+    cmp eax,0
+    je casoZero
     jmp fatorial
- 
+
+casoZero:
+    mov eax,1
+    
+    mov dword [res],eax
+    push dword [res]
+    push str2
+    call printf
+    add esp,8
+    
+    xor eax, eax
+    mov esp,ebp
+    ret
 fim: 
     ;printf("O fatorial ehh %d", res);
     mov dword [res],eax
