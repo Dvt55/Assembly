@@ -1,0 +1,54 @@
+%include "io.inc"
+EXTERN scanf
+EXTERN printf
+
+section .data
+str1 dd "%d",0
+str2 dd "O fatorial ehh %d",0h
+
+section .bss
+num1 RESD 1
+res RESD 1
+
+section .text
+global CMAIN
+CMAIN:
+    mov ebp, esp; for correct debugging
+    
+    ;Scanf("%d", &num1);
+    push num1
+    push str1
+    call scanf
+    add esp,8
+    
+    mov eax, [num1]
+    mov ebx,[num1]
+    jmp fatorial
+ 
+fim: 
+    ;printf("O fatorial ehh %d", res);
+    mov dword [res],eax
+    push dword [res]
+    push str2
+    call printf
+    add esp,8
+    
+    xor eax, eax
+    mov esp,ebp
+    ret
+    
+fatorial:
+      ; while(ebx <=1){
+      ;       ebx -= 1
+      ;       eax = eax*ebx
+      dec ebx
+      cmp ebx,1
+      jbe fim
+      mul ebx
+      loop fatorial
+      
+       
+
+       
+      
+       
