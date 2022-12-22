@@ -1,0 +1,93 @@
+.equ UART0_BASE, 0xff201000
+
+.global _start
+_start:
+	
+adr r0, end1
+mov r1, r0
+.ler_end:
+     
+	 ldrb r0, [r1], #1
+     cmp r0, #'\n'
+     bleq .printa_enderecos
+     bl .uart_putc
+     
+     //guardar enderço 1 no buffer
+     ldr r3, =_buffer_count1
+     ldrb r2, [r3]
+     ldr r4, =_buffer1
+     strb r0, [r4, r2]
+     add r2, r2, #1
+     strb r2, [r3]
+     
+	 bl .ler_end
+.printa_enderecos:
+     stmfd sp!,{r1-r5,lr}
+     
+     // transformando para hexa e colocando no buffer
+     ldr r3, =_buffer_count1
+     ldrb r2, [r3]
+	 mov r2, #10
+     ldr r4, =_buffer1
+     mov r5, #2
+     mov r3, #0
+
+.loop_buffer1:
+     ldrb r0, [r4, r5]
+ //    cmp r0, #':'
+  //   blt .numero
+     sub r0, r0, #0x30
+.volta:
+     mov r3, r3, LSL #4
+     add r3, r3, r0
+     add r5, r5, #1
+     cmp r2, r5
+     bne .loop_buffer1
+     
+     ldr r6, =_buffer_count1
+     ldrb r2, [r6]
+     mov r2, #4
+     strb r2, [r6]
+     ldr r4, =_buffer1
+     mov r5, #0
+     
+     strb r3, [r4, #0]
+     mov r3, r3, LSR #4
+     strb r3, [r4, #1]
+     mov r3, r3, LSR #4
+     strb r3, [r4, #2]
+     mov r3, r3, LSR #4
+     strb r3, [r4, #3]
+     mov r3, r3, LSR #4
+	
+	
+	
+    ldr r4, =_buffer1
+    ldr r3, =_buffer_count1
+    ldrb r2, [r3]
+    mov r5, #0
+    
+.loop:
+    ldrb r0, [r4, r5]
+    bl .uart_putc
+    
+    add r5, r5, #1
+    cmp r5, r2
+    bne .loop  
+	
+.uart_putc:
+    stmfd sp!,{r1-r2,lr}
+    ldr     r1, =UART0_BASE
+
+    strb    r0, [r1]                
+    ldmfd sp!,{r1-r2,pc}	
+	
+	
+
+end1: .asciz "0x30313233\n"
+_buffer1: .fill BUFFER_SIZE
+_buffer_count1: .fill 4
+
+
+_flag: .fill 4
+	
